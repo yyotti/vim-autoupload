@@ -4,15 +4,12 @@ scriptencoding utf-8
 " AUTHOR:  Y.Tsutsui
 "=============================================================================
 
-let s:save_cpo = &cpo
-set cpo&vim
-
 if exists('g:loaded_autoupload')
-  let &cpo = s:save_cpo
-  unlet s:save_cpo
-
   finish
 endif
+
+let s:save_cpo = &cpo
+set cpo&vim
 
 " TODO
 
