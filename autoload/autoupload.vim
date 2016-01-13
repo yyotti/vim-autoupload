@@ -12,4 +12,4 @@ set cpo&vim
 let &cpo = s:save_cpo
 unlet s:save_cpo
 
-" vim:set sw=2 foldmethod=marker:
+" vim:set foldmethod=marker:

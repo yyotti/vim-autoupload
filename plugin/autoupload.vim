@@ -18,4 +18,4 @@ let g:loaded_autoupload = 1
 let &cpo = s:save_cpo
 unlet s:save_cpo
 
-" vim:set sw=2 foldmethod=marker:
+" vim:set foldmethod=marker:
