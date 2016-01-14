@@ -11,7 +11,15 @@ endif
 let s:save_cpo = &cpo
 set cpo&vim
 
-" TODO
+"-----------------------------------------------------------------------------
+" Mappings:
+"
+
+"-----------------------------------------------------------------------------
+" Commands:
+"
+command! AutoScpUpload call s:autoscp_upload(1)
+command! AutoScpToggle call s:autoscp_toggle_enable()
 
 let g:loaded_autoupload = 1
 
