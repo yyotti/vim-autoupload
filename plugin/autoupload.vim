@@ -19,7 +19,7 @@ set cpo&vim
 " Commands:
 "
 command! AutoScpUpload call s:autoscp_upload(1)
-command! AutoScpToggle call s:autoscp_toggle_enable()
+command! AutoScpToggle call autoupload#toggle()
 
 let g:loaded_autoupload = 1
 
