@@ -86,8 +86,8 @@ function! autoupload#util#err_msg(msg) abort "{{{
   echohl None
 endfunction "}}}
 
-function! autoupload#util#json_decode(json, ...) abort "{{{
-  return call(s:vital_json().decode, [a:json], a:000)
+function! autoupload#util#json_decode(json) abort "{{{
+  return call(s:vital_json().decode, [a:json])
 endfunction "}}}
 
 function! autoupload#util#unlet_vars(vars) abort "{{{
