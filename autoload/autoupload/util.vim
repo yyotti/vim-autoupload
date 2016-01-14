@@ -92,7 +92,7 @@ endfunction "}}}
 
 function! autoupload#util#unlet_vars(vars) abort "{{{
   for var in a:vars
-    if exists({var})
+    if !exists(var)
       continue
     endif
 
