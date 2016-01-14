@@ -95,36 +95,36 @@ endfunction " }}}
 
 function! s:check_config(config) abort " {{{
   if !has_key(a:config, 'host') || type(a:config.host) != 1 || empty(a:config.host)
-    call autoupload#util#err_msg('hostは文字列で必ず指定してください')
+    call autoupload#util#error_message('hostは文字列で必ず指定してください')
     return 0
   endif
 
   if !has_key(a:config, 'user') || type(a:config.user) != 1 || empty(a:config.user)
-    call autoupload#util#err_msg('userは文字列で必ず指定してください')
+    call autoupload#util#error_message('userは文字列で必ず指定してください')
     return 0
   endif
 
   if has_key(a:config, 'timeout') && (type(a:config.timeout) != 0 || a:config.timeout < 1)
-    call autoupload#util#err_msg('timeoutは正数で指定してください')
+    call autoupload#util#error_message('timeoutは正数で指定してください')
     return 0
   endif
 
   if has_key(a:config, 'path_map') && (type(a:config.timeout) != 4)
     if type(a:config.path_map) != 4
-      call autoupload#util#err_msg('path_mapは辞書型で指定してください')
+      call autoupload#util#error_message('path_mapは辞書型で指定してください')
       return 0
     endif
 
     for key in keys(a:config.path_map)
       if type(a:config.path_map[key]) != 1
-        call autoupload#util#err_msg('path_mapの値は文字列でなければなりません')
+        call autoupload#util#error_message('path_mapの値は文字列でなければなりません')
         return 0
       endif
     endfor
   endif
 
   if has_key(a:config, 'enable') && type(a:config.enable) != 0
-    call autoupload#util#err_msg('enableは真偽値で指定してください')
+    call autoupload#util#error_message('enableは真偽値で指定してください')
     return 0
   endif
 
@@ -167,7 +167,7 @@ function! autoupload#upload(force) abort "{{{
 
   let res = autoupload#util#system(join(commands, ' && '), 1)
   if !empty(res)
-    call autoupload#util#err_msg(res)
+    call autoupload#util#error_message(res)
   else
     echo 'uploaded.'
   endif
@@ -175,7 +175,7 @@ endfunction "}}}
 
 function! autoupload#enable() abort "{{{
   if !exists('b:autoupload_config')
-    call autoupload#util#err_msg('初期化されていません')
+    call autoupload#util#error_message('初期化されていません')
     return
   endif
 
@@ -184,7 +184,7 @@ endfunction "}}}
 
 function! autoupload#disable() abort "{{{
   if !exists('b:autoupload_config')
-    call autoupload#util#err_msg('初期化されていません')
+    call autoupload#util#error_message('初期化されていません')
     return
   endif
 
@@ -193,7 +193,7 @@ endfunction "}}}
 
 function! autoupload#toggle() abort "{{{
   if !exists('b:autoupload_config')
-    call autoupload#util#err_msg('初期化されていません')
+    call autoupload#util#error_message('初期化されていません')
     return
   endif
 

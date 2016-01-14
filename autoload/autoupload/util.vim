@@ -73,7 +73,7 @@ function! autoupload#util#relative_path(path, base) abort "{{{
   return stridx(p, b) == 0 ? p[strlen(b):] : p
 endfunction "}}}
 
-function! autoupload#util#err_msg(msg) abort "{{{
+function! autoupload#util#error_message(msg) abort "{{{
   let msg = '[autoupload] '
   if type(a:msg) == type("")
     let msg .= a:msg
@@ -159,7 +159,7 @@ endfunction "}}}
 
 function! s:finish_upload(result) abort "{{{
   if !empty(a:result)
-    call autoupload#util#err_msg('upload error: ' . a:result)
+    call autoupload#util#error_message('upload error: ' . a:result)
   else
     echo 'uploaded.'
   endif
