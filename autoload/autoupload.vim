@@ -94,17 +94,20 @@ function! s:load_config(file_path) abort " {{{
 endfunction " }}}
 
 function! s:check_config(config) abort " {{{
-  if !has_key(a:config, 'host') || type(a:config.host) != 1 || empty(a:config.host)
+  if !has_key(a:config, 'host') || type(a:config.host) != 1
+        \ || empty(a:config.host)
     call autoupload#util#error_message('hostは文字列で必ず指定してください')
     return 0
   endif
 
-  if !has_key(a:config, 'user') || type(a:config.user) != 1 || empty(a:config.user)
+  if !has_key(a:config, 'user') || type(a:config.user) != 1
+        \ || empty(a:config.user)
     call autoupload#util#error_message('userは文字列で必ず指定してください')
     return 0
   endif
 
-  if has_key(a:config, 'timeout') && (type(a:config.timeout) != 0 || a:config.timeout < 1)
+  if has_key(a:config, 'timeout')
+        \ && (type(a:config.timeout) != 0 || a:config.timeout < 1)
     call autoupload#util#error_message('timeoutは正数で指定してください')
     return 0
   endif
@@ -117,7 +120,9 @@ function! s:check_config(config) abort " {{{
 
     for key in keys(a:config.path_map)
       if type(a:config.path_map[key]) != 1
-        call autoupload#util#error_message('path_mapの値は文字列でなければなりません')
+        call autoupload#util#error_message(
+              \   'path_mapの値は文字列でなければなりません'
+              \ )
         return 0
       endif
     endfor
