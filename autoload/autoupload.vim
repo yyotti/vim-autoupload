@@ -7,7 +7,7 @@ scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
 
-let s:autoupload#default_config = {
+let s:autoupload_default_config = {
       \   'enable': 1,
       \   'timeout': -1,
       \   'remote_base': '',
@@ -88,7 +88,7 @@ function! s:load_config(file_path) abort " {{{
   endif
 
   let b:autoupload#config = json
-  call extend(b:autoupload#config, s:autoupload#default_config, 'keep')
+  call extend(b:autoupload#config, s:autoupload_default_config, 'keep')
 
   return 1
 endfunction " }}}
