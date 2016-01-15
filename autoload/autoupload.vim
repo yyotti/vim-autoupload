@@ -14,20 +14,18 @@ let s:autoupload_default_config = {
       \   'path_map': {}
       \ }
 
+function! s:is_initialized() abort "{{{
+  return exists('b:autoupload') && has_key(b:autoupload, 'config')
+endfunction "{{{ "}}} "}}}
+
 function! autoupload#init(force) abort "{{{
-  if get(b:, 'autoupload_init', 0) && !a:force
+  if s:is_initialized() && !a:force
     return
   endif
 
-  call autoupload#util#unlet_vars([
-        \   'b:autoupload_init',
-        \   'b:autoupload_remote_dir',
-        \   'b:autoupload_config',
-        \   'b:autoupload_local_path',
-        \ ])
+  let b:autoupload = {}
 
   if !executable('scp')
-    let b:autoupload_init = 1
     return
   endif
 
@@ -36,13 +34,11 @@ function! autoupload#init(force) abort "{{{
         \   conf_file_name, fnamemodify(expand('%'), ':p:h') . ';**/'
         \ )
   if empty(conf_file_path)
-    let b:autoupload_init = 1
     return
   endif
 
   let conf_file_path = fnamemodify(conf_file_path, ':p')
   if !s:load_config(conf_file_path)
-    let b:autoupload_init = 1
     return
   endif
 
@@ -51,24 +47,22 @@ function! autoupload#init(force) abort "{{{
         \ )
 
   let relpath = autoupload#util#relative_path(expand('%:p'), local_base)
-  let b:autoupload_remote_dir = fnamemodify(relpath, ':h')
-  for from in keys(b:autoupload_config.path_map)
-    let remote = autoupload#util#add_last_separator(b:autoupload_remote_dir)
+  let b:autoupload.remote_dir = fnamemodify(relpath, ':h')
+  for from in keys(b:autoupload.config.path_map)
+    let remote = autoupload#util#add_last_separator(b:autoupload.remote_dir)
     if stridx(remote, from) == 0
-      let b:autoupload_remote_dir = autoupload#util#add_last_separator(
+      let b:autoupload.remote_dir = autoupload#util#add_last_separator(
             \   substitute(
-            \     remote, from, b:autoupload_config.path_map[from], ''
+            \     remote, from, b:autoupload.config.path_map[from], ''
             \   )
             \ )
     endif
   endfor
-  let b:autoupload_remote_dir = autoupload#util#add_last_separator(
-        \   b:autoupload_config.remote_base
-        \ ) . b:autoupload_remote_dir
+  let b:autoupload.remote_dir = autoupload#util#add_last_separator(
+        \   b:autoupload.config.remote_base
+        \ ) . b:autoupload.remote_dir
 
-  let b:autoupload_local_path = local_base . relpath
-
-  let b:autoupload_init = 1
+  let b:autoupload.local_path = local_base . relpath
 endfunction "}}}
 
 function! s:load_config(file_path) abort " {{{
@@ -87,8 +81,8 @@ function! s:load_config(file_path) abort " {{{
     return 0
   endif
 
-  let b:autoupload_config = json
-  call extend(b:autoupload_config, s:autoupload_default_config, 'keep')
+  let b:autoupload.config = json
+  call extend(b:autoupload.config, s:autoupload_default_config, 'keep')
 
   return 1
 endfunction " }}}
@@ -137,35 +131,35 @@ function! s:check_config(config) abort " {{{
 endfunction " }}}
 
 function! autoupload#upload(force) abort "{{{
-  if !exists('b:autoupload_config')
-        \ || !a:force && !b:autoupload_config.enable
+  if !s:is_initialized()
+        \ || !a:force && !b:autoupload.config.enable
     return
   endif
 
-  let remote = shellescape(b:autoupload_config.user) . '@' .
-        \ shellescape(b:autoupload_config.host)
+  let remote = shellescape(b:autoupload.config.user) . '@' .
+        \ shellescape(b:autoupload.config.host)
 
   let commands = []
   call add(
         \   commands,
         \   printf(
         \     'ssh %s "mkdir -p %s"',
-        \     remote, shellescape(b:autoupload_remote_dir)
+        \     remote, shellescape(b:autoupload.remote_dir)
         \   )
         \ )
 
   let scp_cmd  = 'scp'
-  if b:autoupload_config.timeout > 0
+  if b:autoupload.config.timeout > 0
     let scp_cmd .= ' -o "ConnectTimeout ' .
-          \ b:autoupload_config.timeout . '"'
+          \ b:autoupload.config.timeout . '"'
   endif
   let scp_cmd .= ' %s %s'
   call add(
         \   commands,
         \   printf(
         \     scp_cmd,
-        \     shellescape(b:autoupload_local_path),
-        \     remote . ':' . shellescape(b:autoupload_remote_dir)
+        \     shellescape(b:autoupload.local_path),
+        \     remote . ':' . shellescape(b:autoupload.remote_dir)
         \   )
         \ )
 
@@ -179,30 +173,30 @@ function! autoupload#upload(force) abort "{{{
 endfunction "}}}
 
 function! autoupload#enable() abort "{{{
-  if !exists('b:autoupload_config')
+  if !s:is_initialized()
     call autoupload#util#error_message('初期化されていません')
     return
   endif
 
-  let b:autoupload_config.enable = 1
+  let b:autoupload.config.enable = 1
 endfunction "}}}
 
 function! autoupload#disable() abort "{{{
-  if !exists('b:autoupload_config')
+  if !s:is_initialized()
     call autoupload#util#error_message('初期化されていません')
     return
   endif
 
-  let b:autoupload_config.enable = 0
+  let b:autoupload.config.enable = 0
 endfunction "}}}
 
 function! autoupload#toggle() abort "{{{
-  if !exists('b:autoupload_config')
+  if !s:is_initialized()
     call autoupload#util#error_message('初期化されていません')
     return
   endif
 
-  let b:autoupload_config.enable = !b:autoupload_config.enable
+  let b:autoupload.config.enable = !b:autoupload.config.enable
 endfunction "}}}
 
 let &cpo = s:save_cpo
