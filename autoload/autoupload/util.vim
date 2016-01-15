@@ -94,16 +94,6 @@ function! autoupload#util#json_decode(json) abort "{{{
   return call(s:vital_json().decode, [a:json])
 endfunction "}}}
 
-function! autoupload#util#unlet_vars(vars) abort "{{{
-  for var in a:vars
-    if !exists(var)
-      continue
-    endif
-
-    unlet {var}
-  endfor
-endfunction "}}}
-
 function! autoupload#util#has_vimproc() abort "{{{
   return call(s:vital_process().has_vimproc, [])
 endfunction "}}}
