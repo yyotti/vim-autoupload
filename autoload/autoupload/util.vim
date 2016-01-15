@@ -105,6 +105,7 @@ function! autoupload#util#has_vimproc() abort "{{{
 endfunction "}}}
 
 function! autoupload#util#system(cmd, async) abort "{{{
+  " TODO nvim対応(nvimの場合はvimprocに頼らず非同期でやれる)
   if autoupload#util#has_vimproc() && a:async
     return s:system_async(a:cmd)
   else
@@ -112,6 +113,7 @@ function! autoupload#util#system(cmd, async) abort "{{{
   endif
 endfunction "}}}
 
+" TODO 以下の非同期処理は改善の余地あり
 function! s:system_async(cmd) abort "{{{
   let s:vimproc = vimproc#pgroup_open(a:cmd)
   call s:vimproc.stdin.close()
