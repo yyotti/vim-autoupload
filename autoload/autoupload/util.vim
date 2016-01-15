@@ -62,6 +62,10 @@ function! s:separator() abort "{{{
 endfunction "}}}
 
 function! autoupload#util#add_last_separator(path) abort "{{{
+  if empty(a:path)
+    return a:path
+  endif
+
   return autoupload#util#remove_last_separator(a:path) .
         \ s:separator()
 endfunction "}}}
