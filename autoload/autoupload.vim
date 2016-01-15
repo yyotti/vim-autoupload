@@ -163,10 +163,17 @@ function! autoupload#upload(force) abort "{{{
         \   )
         \ )
 
+  let async = 0 " TODO 選べるようにする意味はあるか？
+  call autoupload#util#system(
+        \   join(commands, ' && '),
+        \   function('s:finish_upload'),
+        \   async
+        \ )
+endfunction "}}}
 
-  let res = autoupload#util#system(join(commands, ' && '), 1)
-  if !empty(res)
-    call autoupload#util#error_message(res)
+function! s:finish_upload(result) abort "{{{
+  if !empty(a:result)
+    call autoupload#util#error_message('upload error: ' . a:result)
   else
     echo 'uploaded.'
   endif

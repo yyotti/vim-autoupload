@@ -98,17 +98,17 @@ function! autoupload#util#has_vimproc() abort "{{{
   return call(s:vital_process().has_vimproc, [])
 endfunction "}}}
 
-function! autoupload#util#system(cmd, async) abort "{{{
+function! autoupload#util#system(cmd, finish_func, async) abort "{{{
   " TODO nvim対応(nvimの場合はvimprocに頼らず非同期でやれる)
   if autoupload#util#has_vimproc() && a:async
-    return s:system_async(a:cmd)
+    call s:system_async(a:cmd, a:finish_func)
   else
-    return call(s:vital_process().system, [a:cmd])
+    call a:finish_func(call(s:vital_process().system, [a:cmd]))
   endif
 endfunction "}}}
 
-" TODO 以下の非同期処理は改善の余地あり
-function! s:system_async(cmd) abort "{{{
+function! s:system_async(cmd, finish_func) abort "{{{
+  let s:finish_func = a:finish_func
   let s:vimproc = vimproc#pgroup_open(a:cmd)
   call s:vimproc.stdin.close()
 
@@ -140,7 +140,7 @@ function! s:receive_vimproc_result() abort "{{{
     echomsg v:throwpoint
   endtry
 
-  call s:finish_upload(s:result)
+  call s:finish_func(s:result)
 
   augroup vim-autoupload-async
     autocmd!
@@ -151,14 +151,7 @@ function! s:receive_vimproc_result() abort "{{{
   call s:vimproc.waitpid()
   unlet s:vimproc
   unlet s:result
-endfunction "}}}
-
-function! s:finish_upload(result) abort "{{{
-  if !empty(a:result)
-    call autoupload#util#error_message('upload error: ' . a:result)
-  else
-    echo 'uploaded.'
-  endif
+  unlet s:finish_func
 endfunction "}}}
 
 let &cpo = s:save_cpo
