@@ -93,32 +93,32 @@ function! s:load_config(file_path) abort " {{{
 endfunction " }}}
 
 function! s:check_config(config) abort " {{{
-  if !has_key(a:config, 'host') || type(a:config.host) != 1
+  if !has_key(a:config, 'host') || type(a:config.host) != type('')
         \ || empty(a:config.host)
     call autoupload#util#error_message('hostは文字列で必ず指定してください')
     return 0
   endif
 
-  if !has_key(a:config, 'user') || type(a:config.user) != 1
+  if !has_key(a:config, 'user') || type(a:config.user) != type('')
         \ || empty(a:config.user)
     call autoupload#util#error_message('userは文字列で必ず指定してください')
     return 0
   endif
 
   if has_key(a:config, 'timeout')
-        \ && (type(a:config.timeout) != 0 || a:config.timeout < 1)
+        \ && (type(a:config.timeout) != type(0) || a:config.timeout < 1)
     call autoupload#util#error_message('timeoutは正数で指定してください')
     return 0
   endif
 
-  if has_key(a:config, 'path_map') && (type(a:config.timeout) != 4)
-    if type(a:config.path_map) != 4
+  if has_key(a:config, 'path_map')
+    if type(a:config.path_map) != type({})
       call autoupload#util#error_message('path_mapは辞書型で指定してください')
       return 0
     endif
 
     for key in keys(a:config.path_map)
-      if type(a:config.path_map[key]) != 1
+      if type(a:config.path_map[key]) != type('')
         call autoupload#util#error_message(
               \   'path_mapの値は文字列でなければなりません'
               \ )
@@ -127,12 +127,12 @@ function! s:check_config(config) abort " {{{
     endfor
   endif
 
-  if has_key(a:config, 'auto') && type(a:config.auto) != 0
+  if has_key(a:config, 'auto') && type(a:config.auto) != type(0)
     call autoupload#util#error_message('autoは真偽値で指定してください')
     return 0
   endif
 
-  if has_key(a:config, 'async') && type(a:config.auto) != 0
+  if has_key(a:config, 'async') && type(a:config.auto) != type(0)
     call autoupload#util#error_message('asyncは真偽値で指定してください')
     return 0
   endif

@@ -79,7 +79,7 @@ endfunction "}}}
 
 function! autoupload#util#error_message(msg) abort "{{{
   let msg = '[autoupload] '
-  if type(a:msg) == type("")
+  if type(a:msg) == type('')
     let msg .= a:msg
   else
     let msg .= string(a:msg)
@@ -92,7 +92,7 @@ endfunction "}}}
 
 function! autoupload#util#message(msg) abort "{{{
   let msg = '[autoupload] '
-  if type(a:msg) == type("")
+  if type(a:msg) == type('')
     let msg .= a:msg
   else
     let msg .= string(a:msg)
