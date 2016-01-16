@@ -149,6 +149,7 @@ function! s:receive_vimproc_result() abort "{{{
       return 0
     endif
   catch
+    " TODO メッセージ内容を検討
     call autoupload#util#error_message(v:throwpoint)
   endtry
 
