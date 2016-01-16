@@ -90,6 +90,18 @@ function! autoupload#util#error_message(msg) abort "{{{
   echohl None
 endfunction "}}}
 
+function! autoupload#util#message(msg) abort "{{{
+  let msg = '[autoupload] '
+  if type(a:msg) == type("")
+    let msg .= a:msg
+  else
+    let msg .= string(a:msg)
+  endif
+
+  echohl None
+  echo msg
+endfunction "}}}
+
 function! autoupload#util#json_decode(json) abort "{{{
   return call(s:vital_json().decode, [a:json])
 endfunction "}}}
