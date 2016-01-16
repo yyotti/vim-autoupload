@@ -175,7 +175,7 @@ function! s:finish_upload(result) abort "{{{
   if !empty(a:result)
     call autoupload#util#error_message('upload error: ' . a:result)
   else
-    echo 'uploaded.'
+    call autoupload#util#message('uploaded')
   endif
 endfunction "}}}
 
