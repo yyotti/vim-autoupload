@@ -22,7 +22,7 @@ nnoremap <silent> <Plug>(autoupload-toggle)
 "-----------------------------------------------------------------------------
 " Commands:
 "
-command! AutouploadUpload call autoupload#upload(1)
+command! -bang AutouploadUpload call autoupload#upload(<bang>0)
 command! AutouploadToggle call autoupload#toggle_auto()
 
 let g:loaded_autoupload = 1
