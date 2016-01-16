@@ -20,7 +20,7 @@ set cpo&vim
 "
 " TODO
 " command! AutoScpUpload call s:autoscp_upload(1)
-command! AutoScpToggle call autoupload#toggle()
+command! AutoScpToggle call autoupload#toggle_auto()
 
 let g:loaded_autoupload = 1
 

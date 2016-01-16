@@ -8,7 +8,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let s:autoupload_default_config = {
-      \   'enable': 1,
+      \   'auto': 1,
       \   'timeout': -1,
       \   'remote_base': '',
       \   'path_map': {}
@@ -122,8 +122,8 @@ function! s:check_config(config) abort " {{{
     endfor
   endif
 
-  if has_key(a:config, 'enable') && type(a:config.enable) != 0
-    call autoupload#util#error_message('enableは真偽値で指定してください')
+  if has_key(a:config, 'auto') && type(a:config.auto) != 0
+    call autoupload#util#error_message('autoは真偽値で指定してください')
     return 0
   endif
 
@@ -132,7 +132,7 @@ endfunction " }}}
 
 function! autoupload#upload(force) abort "{{{
   if !s:is_initialized()
-        \ || !a:force && !b:autoupload.config.enable
+        \ || !a:force && !b:autoupload.config.auto
     return
   endif
 
@@ -179,31 +179,31 @@ function! s:finish_upload(result) abort "{{{
   endif
 endfunction "}}}
 
-function! autoupload#enable() abort "{{{
+function! autoupload#enable_auto() abort "{{{
   if !s:is_initialized()
     call autoupload#util#error_message('初期化されていません')
     return
   endif
 
-  let b:autoupload.config.enable = 1
+  let b:autoupload.config.auto = 1
 endfunction "}}}
 
-function! autoupload#disable() abort "{{{
+function! autoupload#disable_auto() abort "{{{
   if !s:is_initialized()
     call autoupload#util#error_message('初期化されていません')
     return
   endif
 
-  let b:autoupload.config.enable = 0
+  let b:autoupload.config.auto = 0
 endfunction "}}}
 
-function! autoupload#toggle() abort "{{{
+function! autoupload#toggle_auto() abort "{{{
   if !s:is_initialized()
     call autoupload#util#error_message('初期化されていません')
     return
   endif
 
-  let b:autoupload.config.enable = !b:autoupload.config.enable
+  let b:autoupload.config.auto = !b:autoupload.config.auto
 endfunction "}}}
 
 let &cpo = s:save_cpo
