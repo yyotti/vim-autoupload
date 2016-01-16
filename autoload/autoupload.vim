@@ -23,7 +23,9 @@ function! autoupload#init(force) abort "{{{
     return
   endif
 
-  let b:autoupload = {}
+  if exists('b:autoupload')
+    unlet b:autoupload
+  endif
 
   if !executable('scp')
     return
@@ -36,6 +38,8 @@ function! autoupload#init(force) abort "{{{
   if empty(conf_file_path)
     return
   endif
+
+  let b:autoupload = {}
 
   let conf_file_path = fnamemodify(conf_file_path, ':p')
   if !s:load_config(conf_file_path)
