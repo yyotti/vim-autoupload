@@ -204,6 +204,7 @@ function! autoupload#toggle_auto() abort "{{{
   endif
 
   let b:autoupload.config.auto = !b:autoupload.config.auto
+  call autoupload#util#message(b:autoupload.config.auto ? 'auto' : 'manual')
 endfunction "}}}
 
 let &cpo = s:save_cpo
