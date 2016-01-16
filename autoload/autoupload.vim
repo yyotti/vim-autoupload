@@ -163,7 +163,7 @@ function! autoupload#upload(force) abort "{{{
         \   )
         \ )
 
-  let async = 0 " TODO 選べるようにする意味はあるか？
+  let async = 1 " TODO 選べるようにする意味はあるか？
   call autoupload#util#system(
         \   join(commands, ' && '),
         \   function('s:finish_upload'),
