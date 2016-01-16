@@ -149,7 +149,7 @@ function! s:receive_vimproc_result() abort "{{{
       return 0
     endif
   catch
-    echomsg v:throwpoint
+    call autoupload#util#error_message(v:throwpoint)
   endtry
 
   call s:finish_func(s:result)
