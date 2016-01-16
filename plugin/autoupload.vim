@@ -14,6 +14,8 @@ set cpo&vim
 "-----------------------------------------------------------------------------
 " Mappings:
 "
+nnoremap <silent> <Plug>(autoupload-toggle)
+      \ :<C-u>call autoupload#toggle_auto()<CR>
 
 "-----------------------------------------------------------------------------
 " Commands:
