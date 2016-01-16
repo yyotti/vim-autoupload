@@ -9,6 +9,7 @@ set cpo&vim
 
 let s:autoupload_default_config = {
       \   'auto': 1,
+      \   'async': 1,
       \   'timeout': -1,
       \   'remote_base': '',
       \   'path_map': {}
@@ -131,6 +132,11 @@ function! s:check_config(config) abort " {{{
     return 0
   endif
 
+  if has_key(a:config, 'async') && type(a:config.auto) != 0
+    call autoupload#util#error_message('asyncは真偽値で指定してください')
+    return 0
+  endif
+
   return 1
 endfunction " }}}
 
@@ -167,11 +173,10 @@ function! autoupload#upload(force) abort "{{{
         \   )
         \ )
 
-  let async = 1 " TODO 選べるようにする意味はあるか？
   call autoupload#util#system(
         \   join(commands, ' && '),
         \   function('s:finish_upload'),
-        \   async
+        \   b:autoupload.config.async
         \ )
 endfunction "}}}
 
