@@ -21,8 +21,8 @@ nnoremap <silent> <Plug>(autoupload-toggle)
 " Commands:
 "
 " TODO
-" command! AutoScpUpload call s:autoscp_upload(1)
-command! AutoScpToggle call autoupload#toggle_auto()
+" command! AutouploadUpload call s:autoscp_upload(1)
+command! AutouploadToggle call autoupload#toggle_auto()
 
 let g:loaded_autoupload = 1
 
