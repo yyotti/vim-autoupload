@@ -53,6 +53,9 @@ function! autoupload#init(force) abort "{{{
 
   let relpath = autoupload#util#relative_path(expand('%:p'), local_base)
   let b:autoupload.remote_dir = fnamemodify(relpath, ':h')
+  if b:autoupload.remote_dir ==# '.'
+    let b:autoupload.remote_dir = ''
+  endif
   for from in keys(b:autoupload.config.path_map)
     let remote = autoupload#util#add_last_separator(b:autoupload.remote_dir)
     if stridx(remote, from) == 0
@@ -146,38 +149,12 @@ function! autoupload#upload(force) abort "{{{
     return
   endif
 
-  let remote = shellescape(b:autoupload.config.user) . '@' .
-        \ shellescape(b:autoupload.config.host)
+  let params = copy(b:autoupload.config)
+  let params.remote_dir = b:autoupload.remote_dir
+  let params.local_path = b:autoupload.local_path
+  let params.on_exit = function('s:finish_upload')
 
-  let commands = []
-  call add(
-        \   commands,
-        \   printf(
-        \     'ssh %s "mkdir -p %s"',
-        \     remote, shellescape(b:autoupload.remote_dir)
-        \   )
-        \ )
-
-  let scp_cmd  = 'scp'
-  if b:autoupload.config.timeout > 0
-    let scp_cmd .= ' -o "ConnectTimeout ' .
-          \ b:autoupload.config.timeout . '"'
-  endif
-  let scp_cmd .= ' %s %s'
-  call add(
-        \   commands,
-        \   printf(
-        \     scp_cmd,
-        \     shellescape(b:autoupload.local_path),
-        \     remote . ':' . shellescape(b:autoupload.remote_dir)
-        \   )
-        \ )
-
-  call autoupload#util#system(
-        \   join(commands, ' && '),
-        \   function('s:finish_upload'),
-        \   b:autoupload.config.async
-        \ )
+  call autoupload#scp#upload(params)
 endfunction "}}}
 
 function! s:finish_upload(result) abort "{{{
