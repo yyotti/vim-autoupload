@@ -4,8 +4,8 @@ scriptencoding utf-8
 " AUTHOR:  Y.Tsutsui
 "=============================================================================
 
-let s:save_cpo = &cpo
-set cpo&vim
+let s:save_cpo = &cpoptions
+set cpoptions&vim
 
 let s:autoupload_default_config = {
       \   'auto': 1,
@@ -32,36 +32,36 @@ function! autoupload#init(force) abort "{{{
     return
   endif
 
-  let conf_file_name = get(g:, 'autoupload#config_file', '.autoupload.json')
-  let conf_file_path = findfile(
-        \   conf_file_name, fnamemodify(expand('%'), ':p:h') . ';**/'
+  let l:conf_file_name = get(g:, 'autoupload#config_file', '.autoupload.json')
+  let l:conf_file_path = findfile(
+        \   l:conf_file_name, fnamemodify(expand('%'), ':p:h') . ';**/'
         \ )
-  if empty(conf_file_path)
+  if empty(l:conf_file_path)
     return
   endif
 
   let b:autoupload = {}
 
-  let conf_file_path = fnamemodify(conf_file_path, ':p')
-  if !s:load_config(conf_file_path)
+  let l:conf_file_path = fnamemodify(l:conf_file_path, ':p')
+  if !s:load_config(l:conf_file_path)
     return
   endif
 
-  let local_base = autoupload#util#add_last_separator(
-        \   fnamemodify(conf_file_path, ':p:h')
+  let l:local_base = autoupload#util#add_last_separator(
+        \   fnamemodify(l:conf_file_path, ':p:h')
         \ )
 
-  let relpath = autoupload#util#relative_path(expand('%:p'), local_base)
-  let b:autoupload.remote_dir = fnamemodify(relpath, ':h')
+  let l:relpath = autoupload#util#relative_path(expand('%:p'), l:local_base)
+  let b:autoupload.remote_dir = fnamemodify(l:relpath, ':h')
   if b:autoupload.remote_dir ==# '.'
     let b:autoupload.remote_dir = ''
   endif
-  for from in keys(b:autoupload.config.path_map)
-    let remote = autoupload#util#add_last_separator(b:autoupload.remote_dir)
-    if stridx(remote, from) == 0
+  for l:from in keys(b:autoupload.config.path_map)
+    let l:remote = autoupload#util#add_last_separator(b:autoupload.remote_dir)
+    if stridx(l:remote, l:from) == 0
       let b:autoupload.remote_dir = autoupload#util#add_last_separator(
             \   substitute(
-            \     remote, from, b:autoupload.config.path_map[from], ''
+            \     l:remote, l:from, b:autoupload.config.path_map[l:from], ''
             \   )
             \ )
     endif
@@ -70,7 +70,7 @@ function! autoupload#init(force) abort "{{{
         \   b:autoupload.config.remote_base
         \ ) . b:autoupload.remote_dir
 
-  let b:autoupload.local_path = local_base . relpath
+  let b:autoupload.local_path = l:local_base . l:relpath
 endfunction "}}}
 
 function! s:load_config(file_path) abort " {{{
@@ -79,17 +79,17 @@ function! s:load_config(file_path) abort " {{{
   endif
 
   try
-    let json_string = join(readfile(a:file_path), ' ')
-    let json = autoupload#util#json_decode(json_string)
+    let l:json_string = join(readfile(a:file_path), ' ')
+    let l:json = autoupload#util#json_decode(l:json_string)
   catch
     return 0
   endtry
 
-  if !s:check_config(json)
+  if !s:check_config(l:json)
     return 0
   endif
 
-  let b:autoupload.config = json
+  let b:autoupload.config = l:json
   call extend(b:autoupload.config, s:autoupload_default_config, 'keep')
 
   return 1
@@ -120,8 +120,8 @@ function! s:check_config(config) abort " {{{
       return 0
     endif
 
-    for key in keys(a:config.path_map)
-      if type(a:config.path_map[key]) != type('')
+    for l:key in keys(a:config.path_map)
+      if type(a:config.path_map[l:key]) != type('')
         call autoupload#util#error_message(
               \   'path_mapの値は文字列でなければなりません'
               \ )
@@ -149,12 +149,12 @@ function! autoupload#upload(force) abort "{{{
     return
   endif
 
-  let params = copy(b:autoupload.config)
-  let params.remote_dir = b:autoupload.remote_dir
-  let params.local_path = b:autoupload.local_path
-  let params.on_exit = function('s:finish_upload')
+  let l:params = copy(b:autoupload.config)
+  let l:params.remote_dir = b:autoupload.remote_dir
+  let l:params.local_path = b:autoupload.local_path
+  let l:params.on_exit = function('s:finish_upload')
 
-  call autoupload#scp#upload(params)
+  call autoupload#scp#upload(l:params)
 endfunction "}}}
 
 function! s:finish_upload(result) abort "{{{
@@ -193,7 +193,7 @@ function! autoupload#toggle_auto() abort "{{{
   call autoupload#util#message(b:autoupload.config.auto ? 'auto' : 'manual')
 endfunction "}}}
 
-let &cpo = s:save_cpo
+let &cpoptions = s:save_cpo
 unlet s:save_cpo
 
 " vim:set foldmethod=marker:

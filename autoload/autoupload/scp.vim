@@ -3,8 +3,8 @@ scriptencoding utf-8
 " FILE: scp.vim
 " AUTHOR: Y.Tsutsui
 "=============================================================================
-let s:save_cpo = &cpo
-set cpo&vim
+let s:save_cpo = &cpoptions
+set cpoptions&vim
 
 let s:jobs = {}
 
@@ -17,28 +17,28 @@ function! autoupload#scp#upload(params) abort "{{{
 endfunction "}}}
 
 function! s:nvim_upload(params) abort "{{{
-  let remote = a:params.user . '@' . a:params.host
+  let l:remote = a:params.user . '@' . a:params.host
 
-  let mkdir_cmd = [
+  let l:mkdir_cmd = [
         \   'ssh',
-        \   remote,
+        \   l:remote,
         \   'mkdir',
         \   '-p',
         \   shellescape(a:params.remote_dir),
         \ ]
 
-  let scp_cmd = [ 'scp' ]
+  let l:scp_cmd = [ 'scp' ]
   if a:params.timeout > 0
-    let scp_cmd += [ '-o', 'ConnectTimeout ' . a:params.timeout ]
+    let l:scp_cmd += [ '-o', 'ConnectTimeout ' . a:params.timeout ]
   endif
-  let scp_cmd += [
+  let l:scp_cmd += [
         \   a:params.local_path,
-        \   remote . ':' . a:params.remote_dir,
+        \   l:remote . ':' . a:params.remote_dir,
         \ ]
 
-  let commands = [ mkdir_cmd, scp_cmd ]
+  let l:commands = [ l:mkdir_cmd, l:scp_cmd ]
 
-  call s:start_job(commands, a:params.on_exit)
+  call s:start_job(l:commands, a:params.on_exit)
 endfunction "}}}
 
 function! s:start_job(commands, func) abort "{{{
@@ -46,27 +46,26 @@ function! s:start_job(commands, func) abort "{{{
     return
   endif
 
-  let cmd = a:commands[0]
-  let next_commands = copy(a:commands)
-  call remove(next_commands, 0)
+  let l:cmd = a:commands[0]
+  let l:next_commands = copy(a:commands)
+  call remove(l:next_commands, 0)
 
-  let options = {
+  let l:options = {
         \   'on_stdout': function('s:on_progress'),
         \   'on_stderr': function('s:on_progress'),
         \   'on_exit': function('s:on_exit'),
         \ }
 
-  let id = jobstart(cmd, options)
+  let l:id = jobstart(l:cmd, l:options)
 
-  let s:jobs[id] = {
-        \   'id': id,
-        \   'next_commands': next_commands,
+  let s:jobs[l:id] = {
+        \   'id': l:id,
+        \   'next_commands': l:next_commands,
         \   'lines': [],
         \   'func': a:func,
         \ }
 endfunction "}}}
 
-" @vimlint(EVL103, 1, a:event)
 function! s:on_progress(job_id, data, event) abort "{{{
   if !has_key(s:jobs, a:job_id)
     return
@@ -74,54 +73,51 @@ function! s:on_progress(job_id, data, event) abort "{{{
 
   let s:jobs[a:job_id].lines += a:data
 endfunction "}}}
-" @vimlint(EVL103, 0, a:event)
 
-" @vimlint(EVL103, 1, a:event)
 function! s:on_exit(job_id, data, event) abort "{{{
   if !has_key(s:jobs, a:job_id)
     return
   endif
 
-  let job = s:jobs[a:job_id]
+  let l:job = s:jobs[a:job_id]
   unlet s:jobs[a:job_id]
 
   if a:data != 0
-    call job.func(join(job.lines, "\n"))
+    call l:job.func(join(l:job.lines, "\n"))
     return
   endif
 
-  if empty(job.next_commands)
-    call job.func('')
+  if empty(l:job.next_commands)
+    call l:job.func('')
   else
-    call s:start_job(job.next_commands, job.func)
+    call s:start_job(l:job.next_commands, l:job.func)
   endif
 endfunction "}}}
-" @vimlint(EVL103, 0, a:event)
 
 function! s:upload(params) abort "{{{
-  let remote = shellescape(a:params.user) . '@' . shellescape(a:params.host)
+  let l:remote = shellescape(a:params.user) . '@' . shellescape(a:params.host)
 
-  let cmd  = 'ssh'
-  let cmd .= ' '
-  let cmd .= remote
-  let cmd .= ' '
-  let cmd .= '"mkdir -p ' . shellescape(a:params.remote_dir) . '"'
+  let l:cmd  = 'ssh'
+  let l:cmd .= ' '
+  let l:cmd .= l:remote
+  let l:cmd .= ' '
+  let l:cmd .= '"mkdir -p ' . shellescape(a:params.remote_dir) . '"'
 
-  let cmd .= ' && '
+  let l:cmd .= ' && '
 
-  let cmd .= 'scp'
+  let l:cmd .= 'scp'
   if a:params.timeout > 0
-    let cmd .= ' -o "ConnectTimeout ' . a:params.timeout . '"'
+    let l:cmd .= ' -o "ConnectTimeout ' . a:params.timeout . '"'
   endif
-  let cmd .= ' '
-  let cmd .= shellescape(a:params.local_path)
-  let cmd .= ' '
-  let cmd .= remote . ':' . shellescape(a:params.remote_dir)
+  let l:cmd .= ' '
+  let l:cmd .= shellescape(a:params.local_path)
+  let l:cmd .= ' '
+  let l:cmd .= l:remote . ':' . shellescape(a:params.remote_dir)
 
-  call autoupload#util#system(cmd, a:params.on_exit, a:params.async)
+  call autoupload#util#system(l:cmd, a:params.on_exit, a:params.async)
 endfunction "}}}
 
-let &cpo = s:save_cpo
+let &cpoptions = s:save_cpo
 unlet s:save_cpo
 
 " vim:set foldmethod=marker:

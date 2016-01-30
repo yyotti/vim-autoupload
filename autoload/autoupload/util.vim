@@ -4,8 +4,8 @@ scriptencoding utf-8
 " AUTHOR:  Y.Tsutsui
 "=============================================================================
 
-let s:save_cpo = &cpo
-set cpo&vim
+let s:save_cpo = &cpoptions
+set cpoptions&vim
 
 "-----------------------------------------------------------------------------
 " Vital:
@@ -71,35 +71,35 @@ function! autoupload#util#add_last_separator(path) abort "{{{
 endfunction "}}}
 
 function! autoupload#util#relative_path(path, base) abort "{{{
-  let p = expand(a:path)
-  let b = autoupload#util#add_last_separator(expand(a:base))
+  let l:p = expand(a:path)
+  let l:b = autoupload#util#add_last_separator(expand(a:base))
 
-  return stridx(p, b) == 0 ? p[strlen(b):] : p
+  return stridx(l:p, l:b) == 0 ? l:p[strlen(l:b):] : l:p
 endfunction "}}}
 
 function! autoupload#util#error_message(msg) abort "{{{
-  let msg = '[autoupload] '
+  let l:msg = '[autoupload] '
   if type(a:msg) == type('')
-    let msg .= a:msg
+    let l:msg .= a:msg
   else
-    let msg .= string(a:msg)
+    let l:msg .= string(a:msg)
   endif
 
   echohl WarningMsg
-  echomsg msg
+  echomsg l:msg
   echohl None
 endfunction "}}}
 
 function! autoupload#util#message(msg) abort "{{{
-  let msg = '[autoupload] '
+  let l:msg = '[autoupload] '
   if type(a:msg) == type('')
-    let msg .= a:msg
+    let l:msg .= a:msg
   else
-    let msg .= string(a:msg)
+    let l:msg .= string(a:msg)
   endif
 
   echohl None
-  echo msg
+  echo l:msg
 endfunction "}}}
 
 function! autoupload#util#json_decode(json) abort "{{{
@@ -167,7 +167,7 @@ function! s:receive_vimproc_result() abort "{{{
   unlet s:finish_func
 endfunction "}}}
 
-let &cpo = s:save_cpo
+let &cpoptions = s:save_cpo
 unlet s:save_cpo
 
 " vim:set foldmethod=marker:
