@@ -161,7 +161,9 @@ function! s:finish_upload(result) abort "{{{
   if !empty(a:result)
     call autoupload#util#error_message('upload error: ' . a:result)
   else
-    call autoupload#util#message('uploaded')
+    call autoupload#util#message(
+          \   printf('%s  uploaded.', strftime('%Y-%m-%d %H:%M:%S'))
+          \ )
   endif
 endfunction "}}}
 
