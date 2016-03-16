@@ -8,8 +8,8 @@ if exists('g:loaded_autoupload')
   finish
 endif
 
-let s:save_cpo = &cpo
-set cpo&vim
+let s:save_cpo = &cpoptions
+set cpoptions&vim
 
 "-----------------------------------------------------------------------------
 " Mappings:
@@ -27,7 +27,7 @@ command! AutouploadToggle call autoupload#toggle_auto()
 
 let g:loaded_autoupload = 1
 
-let &cpo = s:save_cpo
+let &cpoptions = s:save_cpo
 unlet s:save_cpo
 
 " vim:set foldmethod=marker:
