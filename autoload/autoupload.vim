@@ -56,7 +56,7 @@ function! autoupload#init(force) abort "{{{
   if b:autoupload.remote_dir ==# '.'
     let b:autoupload.remote_dir = ''
   endif
-  for l:from in keys(b:autoupload.config.path_map)
+  for l:from in reverse(sort(keys(b:autoupload.config.path_map)))
     let l:remote = autoupload#util#add_last_separator(b:autoupload.remote_dir)
     if stridx(l:remote, l:from) == 0
       let b:autoupload.remote_dir = autoupload#util#add_last_separator(
